@@ -26,6 +26,21 @@ app.get('/api/pirates', function(req, res){
   });
 });
 
+app.get('/api/pirates/:id', function(req, res){
+  let id = req.params.id;
+  Pirate.deleteOne({ _id: id}, result => {
+    return res.sendStatus(200)
+  })
+})
+
+app.post('/api/pirates', function (req, res) {
+  console.log(req.body)
+  Pirate.create( req.body, (err, pirate) => {
+    if (err) return console.log(err);
+    return res.send(pirate)
+  })
+})
+
 app.get('/api/import', (req, res) => {
   Pirate.create(
     {

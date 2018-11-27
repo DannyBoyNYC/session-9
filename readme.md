@@ -87,6 +87,20 @@ componentDidMount(){
   .catch(error => this.setState({ error, isLoading: false }));
 }
 
+  render() {
+  
+    if (this.error) {
+      return <p>{this.error.message}</p>;
+    }
+  
+    if (this.isLoading) {
+      return <p>Loading ...</p>;
+    }
+```
+
+Use destructuring:
+
+```js
 render() {
   const { isLoading, error } = this.state;
 
@@ -105,13 +119,13 @@ Try to induce an error by changing the connection string to the back end.
 
 You can substitute the native fetch API with another library. A commonly used library for fetching data is axios. 
 
-Install axios in your project with `npm install axios -S` and use it instead of the native fetch API in your project. 
+`cd` into `react-pirates` and install axios in your project with `npm install axios -S`.
 
 Refactor using axios instead of the fetch API:
 
 ```js
 import axios from 'axios';
-
+...
   componentDidMount(){
     this.setState({ isLoading: true });
     axios.get('http://localhost:3005/api/pirates')
@@ -157,18 +171,16 @@ app.get('/api/pirates/:id', function(req, res){
 
 ## Adding Pirates
 
-Here is some starter code. It is up to you to debug and get the pirate successfully showing in the front end.
-
 `App.js`:
 
 ```js
-addPirate(pirate) {
-  console.log(pirate)
-  const pirates = {...this.state.pirates}
-  axios.post('http://localhost:3005/api/pirate/', {pirate})
-  .then(response => response.data)
-  .then(this.setState({ pirates: pirates }))
-}
+  addPirate(pirate) {
+    console.log(pirate)
+    const pirates = {...this.state.pirates}
+    axios.post('http://localhost:3005/api/pirates/', pirate )
+    .then(response => response.data)
+    .then(this.setState({ pirates: pirates }))
+  }
 ```
 
 Express:
@@ -182,57 +194,197 @@ app.post('/api/pirates', function(req, res){
 })
 ```
 
-## Notes
+This will work:
 
 ```js
-if (module.hot) {
-  module.hot.accept();
+addPirate(pirate) {
+  const pirates = { ...this.state.pirates }
+  axios.post('http://localhost:3005/api/pirates/', pirate)
+  pirates[pirate] = pirate
+  this.setState({ pirates: pirates })
 }
 ```
 
-Classes in JS: `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#Constructor`
+Use the promise to add the new pirate to pirates and then update state:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```js
+addPirate(pirate) {
+  const pirates = { ...this.state.pirates }
+  axios.post('http://localhost:3005/api/pirates/', pirate)
+  .then ( pirates[pirate] = pirate )
+  .then(this.setState({ pirates: pirates }))
+}
+```
 
-## Available Scripts
+## Routing
 
-In the project directory, you can run:
+Create a new project in today's directory.
 
-### `npm start`
+`npx create-react-app simple-router`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+`cd` into it and start it.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Clean up the default config.
 
-### `npm test`
+`npm install --save react-router-dom`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`index.js`:
 
-### `npm run build`
+```js
+import { BrowserRouter } from 'react-router-dom'
+ReactDOM.render((
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+), document.getElementById('root'))
+```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+`App`:
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+```js
+import React from 'react'
+import Header from './Header'
+import Main from './Main'
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const App = () => (
+  <div>
+    <Header />
+    <Main />
+  </div>
+)
 
-### `npm run eject`
+export default App
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+`Main`:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```js
+import React from 'react';
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+const Main = () => (
+  <p>Main</p>
+)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+export default Main;
+```
 
-## Learn More
+`Header`:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```js
+import React from 'react';
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+const Header = () => (
+  <p>Header</p>
+)
+
+export default Header;
+```
+
+Edit `Main`:
+
+```js
+import React from 'react'
+import { Switch, Route } from 'react-router-dom'
+import Home from './Home'
+import Pirates from './Pirates'
+import Gallery from './Gallery'
+
+const Main = () => (
+  <main>
+    <Switch>
+      <Route exact path='/' component={Home}/>
+      <Route path='/pirates' component={Pirates}/>
+      <Route path='/gallery' component={Gallery}/>
+    </Switch>
+  </main>
+)
+
+export default Main
+```
+
+Pirates:
+
+```js
+import React from 'react';
+
+const Pirates = () => (
+  <p>Pirates</p>
+)
+
+export default Pirates;
+```
+
+Home:
+
+```js
+import React from 'react';
+
+const Home = () => (
+  <p>Home</p>
+)
+
+export default Home;
+```
+
+Gallery:
+
+```js
+import React from 'react';
+
+const Gallery = () => (
+  <p>Gallery</p>
+)
+
+export default Gallery;
+```
+
+Edit Header:
+
+```js
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+// The Header creates links that can be used to navigate
+// between routes.
+const Header = () => (
+  <header>
+    <nav>
+      <ul>
+        <li><Link to='/'>Home</Link></li>
+        <li><Link to='/roster'>Roster</Link></li>
+        <li><Link to='/schedule'>Schedule</Link></li>
+      </ul>
+    </nav>
+  </header>
+)
+
+export default Header
+
+```
+
+### Nested Routes
+
+Pirates:
+
+```js
+import React from 'react'
+import { Switch, Route } from 'react-router-dom'
+import FullRoster from './FullRoster'
+import Player from './Player'
+
+// The Roster component matches one of two different routes
+// depending on the full pathname
+const Roster = () => (
+  <Switch>
+    <Route exact path='/roster' component={FullRoster}/>
+    <Route path='/roster/:number' component={Player}/>
+  </Switch>
+)
+
+
+export default Roster
+
+```
+
+
+## Notes
