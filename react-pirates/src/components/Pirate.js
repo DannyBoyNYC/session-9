@@ -3,10 +3,18 @@ import '../assets/css/Pirate.css'
 
 class Pirate extends Component {
   render(){
+    const { details } = this.props;
     return (
-      <p>{this.props.tagline}</p>
+      <div className='pirate'>
+      <ul>
+      <li>{details.name}</li>
+      <li>{details.weapon}</li>
+      <li>{details.vessel}</li>
+      <li><button onClick={() => this.props.removePirate(this.props.index)}>✖︎</button></li>
+      {/* <li><button onClick={() => this.props.removePirate(this.props.key)}>✖︎</button></li> */}
+        </ul>
+      </div>
       )
+    }
   }
-}
-
-export default Pirate;
+  export default Pirate;
