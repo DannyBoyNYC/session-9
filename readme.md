@@ -1,4 +1,4 @@
-`# IX - React
+# IX - React
 
 ## Homework
 
