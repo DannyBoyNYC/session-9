@@ -218,26 +218,44 @@ addPirate(pirate) {
 
 ## Routing
 
+We will create a separate project to examine React's front end router.
+
 Create a new project in today's directory.
 
 `npx create-react-app simple-router`
 
-`cd` into it and start it.
+`cd` into it and `npm start` it.
 
-Clean up the default config.
+Clean up the default config and move the components folder from the other directory into src.
+
+Review [static routing](https://reacttraining.com/react-router/core/guides/philosophy) in ExpressJS. Compare this to React's dynamic routing.
+
+Since we are in a browser we'll use `react-router-dom`.
 
 `npm install --save react-router-dom`
+
+Next we need to decide between hash routing and browser routing. The hash router is appropriate for static websites so we will use the `BrowserRouter`.
+
+The router only works with a single child so let's nest our `App` component within it.
 
 `index.js`:
 
 ```js
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom'
+import App from './components/App';
+
 ReactDOM.render((
   <BrowserRouter>
     <App />
   </BrowserRouter>
 ), document.getElementById('root'))
 ```
+
+Examine the `App` component using the React browser add in. Note the history props. The most important property of a history object is the location. The location object reflects where your application currently is. Under the hood, React router is using the html5 [history API](https://css-tricks.com/using-the-html5-history-api/). Prior to this, SPA developers commonly used [url hashes](https://coderexample.com/single-page-apps-jquery-routing/) (which do not cause a page refresh) to load and off load DOM elements.
+
+Let's implement a small bit of routing in App.
 
 `App`:
 
