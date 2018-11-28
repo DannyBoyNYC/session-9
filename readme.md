@@ -1,4 +1,4 @@
-# IX - React
+`# IX - React
 
 ## Homework
 
@@ -10,15 +10,16 @@ Of course, if you wish you can do something entirely original. Just propose it. 
 
 ## Reading
 
-* [Rendering elements](https://reactjs.org/docs/rendering-elements.html) in React
-* [State and Lifecycle](https://reactjs.org/docs/state-and-lifecycle.html) in React
-* [Lists and Keys](https://reactjs.org/docs/lists-and-keys.html) in React
+* [React Router](https://reacttraining.com/react-router/web/guides/quick-start)
 
-## Review
+## Persisting the Data Continued
 
-## Persisting the Data
+CD into `express-pirates` `npm i` and `code .`
+CD into `react-pirates` `npm i` and `code .`
 
-## Loading
+Fire up the express app. Fire up the react app.
+
+## Loading Review
 
 The loading state should be used to indicated that an asynchronous request is happening. Set an `isLoading` property in the constructor:
 
@@ -53,7 +54,7 @@ render() {
   }
 ```
 
-Test the loading by going to Chrome dev tools > Network > Online and set it to Slow 3G. 
+Test the loading by going to Chrome dev tools `> Network > Online` and set it to `Slow 3G`. 
 
 As an exercise you could try implementing a [React Content Loader](https://github.com/danilowoz/react-content-loader).
 
@@ -117,7 +118,7 @@ Try to induce an error by changing the connection string to the back end.
 
 ## Axios
 
-You can substitute the native fetch API with another library. A commonly used library for fetching data is axios. 
+You can substitute the native fetch API with another library. A commonly used library for fetching data is axios. It simplifies error reporting and is compatible with browsers that do not support the fetch API.
 
 `cd` into `react-pirates` and install axios in your project with `npm install axios -S`.
 
@@ -158,7 +159,7 @@ removePirate(key){
 }
 ```
 
-Create a corresponding end point in express for deleting a pirate.
+Create a corresponding end point in `express` for deleting a pirate.
 
 ```js
 app.get('/api/pirates/:id', function(req, res){
@@ -169,18 +170,47 @@ app.get('/api/pirates/:id', function(req, res){
 })
 ```
 
-## Adding Pirates
-
-`App.js`:
+We no longer need our React Load Sample Pirates. Delete:
 
 ```js
-  addPirate(pirate) {
-    console.log(pirate)
-    const pirates = {...this.state.pirates}
-    axios.post('http://localhost:3005/api/pirates/', pirate )
-    .then(response => response.data)
-    .then(this.setState({ pirates: pirates }))
-  }
+// import piratesFile from './data/sample-pirates-object';
+...
+// this.loadSamples = this.loadSamples.bind(this);
+...
+// loadSamples() {
+//   this.setState({
+//     pirates: piratesFile
+//   })
+// }
+```
+
+Edit: 
+
+```js
+<PirateForm addPirate={this.addPirate} />
+```
+
+And in the PirateForm:
+
+```js
+<h3>Pirate Form Component</h3>
+  <AddPirateForm addPirate={this.props.addPirate} />
+  // <button onClick={this.props.loadSamples}>Load Sample Pirates</button>
+</div>
+```
+
+## Adding Pirates
+
+React `App.js`:
+
+```js
+addPirate(pirate) {
+  console.log(pirate)
+  const pirates = {...this.state.pirates}
+  axios.post('http://localhost:3005/api/pirates/', pirate )
+  .then(response => response.data)
+  .then(this.setState({ pirates: pirates }))
+}
 ```
 
 Express:
@@ -194,7 +224,11 @@ app.post('/api/pirates', function(req, res){
 })
 ```
 
-This will work:
+Try adding a pirate using the form. You need to refresh the page afterwards in order to see the pirate.
+
+Let's update state after the post operation.
+
+React `App.js`:
 
 ```js
 addPirate(pirate) {
@@ -205,7 +239,7 @@ addPirate(pirate) {
 }
 ```
 
-Use the promise to add the new pirate to pirates and then update state:
+Axios returns a promise. Use the promise to add the new pirate to pirates and then update state:
 
 ```js
 addPirate(pirate) {
@@ -546,3 +580,4 @@ export default Pirate
 We used path params to capture a variable. Examine a single Pirate component and find the `match.params.number` property. Note that the variable is stored as a string. We convert it to a number using `parseInt` base 10 and use it to fire the `get` function in our API. We also add a provision for a priate of that number not being found.
 
 ## Notes
+https://stackoverflow.com/questions/39871662/passing-props-to-component-in-react-router-4
