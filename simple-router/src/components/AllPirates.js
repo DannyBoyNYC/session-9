@@ -9,7 +9,7 @@ const AllPirates = () => (
     {
       PiratesAPI.all().map(p => (
         <li key={p.number}>
-          <Link to={`/allpirates/${p.number}`}>{p.name}</Link>
+          <Link to={`/pirates/${p.number}`}>{p.name}</Link>
         </li>
       ))
     }

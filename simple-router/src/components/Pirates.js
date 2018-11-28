@@ -7,9 +7,9 @@ import Pirate from './Pirate'
 
 const Pirates = () => (
   <Switch>
-    <Route exact path='/allpirates' component={AllPirates}/>
-    <Route path='/allpirates/:number' component={Pirate}/>
-  </Switch>
+    <Route exact path='/pirates' component={AllPirates}/>
+    <Route path='/pirates/:number' component={Pirate}/>
+  </Switch> 
 )
 
 export default Pirates

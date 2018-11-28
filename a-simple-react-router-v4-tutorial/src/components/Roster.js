@@ -12,5 +12,4 @@ const Roster = () => (
   </Switch>
 )
 
-
 export default Roster
