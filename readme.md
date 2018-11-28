@@ -579,5 +579,9 @@ export default Pirate
 
 We used path params to capture a variable. Examine a single Pirate component and find the `match.params.number` property. Note that the variable is stored as a string. We convert it to a number using `parseInt` base 10 and use it to fire the `get` function in our API. We also add a provision for a priate of that number not being found.
 
+## Routing in the Main App
+
+We will attempt to add routing to our current project.
+
 ## Notes
 https://stackoverflow.com/questions/39871662/passing-props-to-component-in-react-router-4
