@@ -581,7 +581,69 @@ We used path params to capture a variable. Examine a single Pirate component and
 
 ## Routing in the Main App
 
-We will attempt to add routing to our current project.
+We will attempt to add routing to our current project. The goal is to create a master / detail view for our pirates.
+
+Install
+
+`npm install --save react-router-dom`
+
+`Index.js`:
+
+```js
+import { BrowserRouter } from 'react-router-dom'
+...
+ReactDOM.render((
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+), document.getElementById('root'))
+```
+
+`Pirate.js`:
+
+```js
+import React from 'react';
+import '../assets/css/Pirate.css';
+import Pirates from './Pirates';
+import PirateDetail from './PirateDetail';
+
+import { Switch, Route } from 'react-router-dom'
+
+class Pirate extends React.Component {
+  render() {
+    const { details } = this.props;
+    return (
+      <Switch>
+      <Route exact path='/' render={(props) => (
+        <Pirates {...props} details={details}  />
+        )} />
+        <Route path='/pirates/:number' component={PirateDetail} />
+        </Switch> 
+        )
+      }
+    }
+    
+    export default Pirate;
+```
+
+Requires `PirateDetail.js`:
+
+```js
+import React from 'react'
+
+const PirateDetail = (props) => (
+  <div className='pirate'>
+  <ul>
+    <li>{props.name}</li>
+    <li>{props.weapon}</li>
+    <li>{props.vessel}</li>
+    {/* <li><button onClick={() => this.props.removePirate(this.props.index)}>✖︎</button></li> */}
+  </ul>
+  </div>
+)
+
+export default PirateDetail
+```
 
 ## Notes
 https://stackoverflow.com/questions/39871662/passing-props-to-component-in-react-router-4
