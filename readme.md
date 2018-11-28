@@ -2,7 +2,7 @@
 
 ## Homework
 
-Review the notes below, step through them again using them and the finished version as a guide. Finish the form that sends a pirate to the back end, updates the database and displays the new pirate in the front end.
+Review the Routing notes and add a nested route to the pirates display page that links to a pirate detail screen.
 
 <!-- For your final project you will create a version of the recipes list and details pages in React.
 
@@ -218,26 +218,44 @@ addPirate(pirate) {
 
 ## Routing
 
+We will create a separate project to examine React's front end router.
+
 Create a new project in today's directory.
 
 `npx create-react-app simple-router`
 
-`cd` into it and start it.
+`cd` into it and `npm start` it.
 
-Clean up the default config.
+Clean up the default config and move the components folder from the other directory into src.
+
+Review [static routing](https://reacttraining.com/react-router/core/guides/philosophy) in ExpressJS. Compare this to React's dynamic routing.
+
+Since we are in a browser we'll use `react-router-dom`.
 
 `npm install --save react-router-dom`
+
+Next we need to decide between hash routing and browser routing. The hash router is appropriate for static websites so we will use the `BrowserRouter`.
+
+The router only works with a single child so let's nest our `App` component within it.
 
 `index.js`:
 
 ```js
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom'
+import App from './components/App';
+
 ReactDOM.render((
   <BrowserRouter>
     <App />
   </BrowserRouter>
 ), document.getElementById('root'))
 ```
+
+Examine the `App` component using the React browser add in. Note the history props. The most important property of a history object is the location. The location object reflects where your application currently is. Under the hood, React router is using the html5 [history API](https://css-tricks.com/using-the-html5-history-api/). Prior to this, SPA developers commonly used [url hashes](https://coderexample.com/single-page-apps-jquery-routing/) (which do not cause a page refresh) to load and off load DOM elements.
+
+Let's implement a small bit of routing in App.
 
 `App`:
 
@@ -278,41 +296,9 @@ const Main = () => (
 export default Main
 ```
 
-Pirates:
+The `<Route>` component is the main building block of React Router. Anywhere that you want to only render content based on the location’s pathname, you should use a `<Route>` element. A `<Route>` expects a `path `prop, which is a string that describes the pathname that the route matches . 
 
-```js
-import React from 'react';
-
-const Pirates = () => (
-  <p>Pirates</p>
-)
-
-export default Pirates;
-```
-
-Home:
-
-```js
-import React from 'react';
-
-const Home = () => (
-  <p>Home</p>
-)
-
-export default Home;
-```
-
-Gallery:
-
-```js
-import React from 'react';
-
-const Gallery = () => (
-  <p>Gallery</p>
-)
-
-export default Gallery;
-```
+Since `/` is part of `/pirates` and `/gallery` it matches both of them. We need to use `exact` on this route.
 
 Edit Header:
 
@@ -320,47 +306,243 @@ Edit Header:
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-// The Header creates links that can be used to navigate
-// between routes.
+// The Header creates links that can be used to navigate between routes.
+
 const Header = () => (
   <header>
     <nav>
       <ul>
         <li><Link to='/'>Home</Link></li>
-        <li><Link to='/roster'>Roster</Link></li>
-        <li><Link to='/schedule'>Schedule</Link></li>
+        <li><Link to='/pirates'>Pirates</Link></li>
+        <li><Link to='/gallery'>Gallery</Link></li>
       </ul>
     </nav>
   </header>
 )
 
 export default Header
+```
 
+Note: Instead of `<a href="/">` we use `<Link to="/">`. `<Link>`s use the `to` prop to describe the location that they should navigate to. Wherever you render a `<Link>`, an anchor (`<a>`) will be rendered in your application’s HTML. `<Link>`s do not cause a page refresh.
+
+Another type of link is provided called [NavLink](https://reacttraining.com/react-router/web/api/NavLink). It  applies a class of active when the path is matched.
+
+```js
+import React from 'react'
+import { NavLink } from 'react-router-dom'
+
+const Header = () => (
+  <header>
+    <nav>
+      <ul>
+        <li><NavLink exact to='/'>Home</NavLink></li>
+        <li><NavLink to='/pirates'>Pirates</NavLink></li>
+        <li><NavLink to='/gallery'>Gallery</NavLink></li>
+      </ul>
+    </nav>
+  </header>
+)
+
+export default Header
+```
+
+`index.js`:
+
+`import './Pirate.css'`
+
+```css
+nav ul {
+  display: flex;
+  list-style: none;
+}
+nav ul a {
+  color: #007eb6;
+  text-decoration: none;
+  padding: 0.25rem;
+}
+.active {
+  color: #fff;
+  background: #007eb6;
+}
 ```
 
 ### Nested Routes
 
-Pirates:
+The pirate detail route is not included in the primary `<Switch>`. It will be rendered by the Pirates component which is rendered whenever the path begins with `pirates`.
+
+Edit `Pirates.js` to include nested routes.
+
+`Pirates`:
 
 ```js
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import FullRoster from './FullRoster'
-import Player from './Player'
+import AllPirates from './AllPirates'
+import Pirate from './Pirate'
 
-// The Roster component matches one of two different routes
-// depending on the full pathname
-const Roster = () => (
+// The Pirates component matches one of two different routes depending on the full pathname
+
+const Pirates = () => (
   <Switch>
-    <Route exact path='/roster' component={FullRoster}/>
-    <Route path='/roster/:number' component={Player}/>
-  </Switch>
+    <Route exact path='/pirates' component={AllPirates}/>
+    <Route path='/pirates/:number' component={Pirate}/>
+  </Switch> 
 )
 
-
-export default Roster
-
+export default Pirates
 ```
 
+Note the use of params here. `:number` will be captured and stored in props as `match.params.number` in a `pirate` detail component.
+
+Create stub templates for  `AllPirates` and `Pirate`.
+
+`AllPirates`:
+
+```js
+import React from 'react';
+
+const AllPirates = () => (
+  <p>AllPirates</p>
+)
+
+export default AllPirates;
+```
+
+`Pirate`:
+
+```js
+import React from 'react';
+
+const Pirate = () => (
+  <p>Pirate</p>
+)
+
+export default Pirate;
+```
+
+We will need a list of pirates. Create `api.js` inside `src`:
+
+```js
+// A simple data API that will be used to get the data for our components. 
+const PiratesAPI = {
+  pirates: [{
+    "number": 1,
+    "name": "John Rackham",
+    "image": "avatar.svg",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam fuga minus molestiae placeat ad iure asperiores nam, recusandae dolor quasi debitis, eveniet reiciendis veritatis et! Sit provident, praesentium laborum tempore.",
+    "year": 1724,
+    "weapon": "Sword",
+    "vessel": "Bounty"
+  }, {
+    "number": 2,
+    "name": "Donald Trump",
+    "image": "avatar.svg",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia consectetur, praesentium eaque ad odit. Nihil molestiae ut temporibus commodi natus delectus cumque architecto, eligendi ad repellat, quasi porro eos dignissimos.",
+    "year": 1800,
+    "weapon": "Twitter",
+    "vessel": "Bounty"
+  }, {
+    "number": 3,
+    "name": "Sea Dog",
+    "image": "avatar.svg",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem autem rerum, nam minima dolorum blanditiis, velit aliquid assumenda illum totam magni sint laudantium laboriosam odit minus distinctio repellendus. Cumque, quod.",
+    "year": 1684,
+    "weapon": "Sword",
+    "vessel": "Bounty"
+  }, {
+    "number": 4,
+    "name": "Jean Lafitte",
+    "image": "avatar.svg",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus pariatur ratione dicta, neque sed, odio maxime, saepe autem libero dolore nobis. Dicta deleniti, illo natus nemo suscipit impedit quod amet!",
+    "year": 1629,
+    "weapon": "Sword",
+    "vessel": "Bounty"
+  }, {
+    "number": 5,
+    "name": "Crab McPirate",
+    "image": "avatar.svg",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magnam ullam eveniet eius provident, omnis quos ex quam maiores id fugit accusantium ea ipsa tenetur excepturi vero quis nulla aliquid!",
+    "year": 1734,
+    "weapon": "Sword",
+    "vessel": "Bounty"
+  },
+  {
+    "number": 6,
+    "name": "Crabby McPirate",
+    "image": "avatar.svg",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam magnam ullam eveniet eius provident, omnis quos ex quam maiores id fugit accusantium ea ipsa tenetur excepturi vero quis nulla aliquid!",
+    "year": 1734,
+    "weapon": "Sword",
+    "vessel": "Bounty"
+  }],
+  all: function() { return this.pirates},
+  get: function(id) {
+    const isPirate = p => p.number === id
+    return this.pirates.find(isPirate)
+  }
+}
+
+export default PiratesAPI
+```
+
+Note the two functions: `all` and `get` included here.
+
+Edit `AllPirates`:
+
+```js
+import React from 'react'
+import PiratesAPI from '../api'
+import { Link } from 'react-router-dom'
+
+// The AllPirates iterates over all of the pirates and creates a link to their details page.
+const AllPirates = () => (
+  <div>
+  <ul>
+    {
+      PiratesAPI.all().map(p => (
+        <li key={p.number}>
+          <Link to={`/pirates/${p.number}`}>{p.name}</Link>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+)
+
+export default AllPirates
+```
+
+Note the use of `key` and the unique pirate number being used to create the link.
+
+Our route `<Route path='/pirates/:number' component={Pirate}/>` is working but requies additional information to be useful.
+
+```js
+import React from 'react'
+import PiratesAPI from '../api'
+import { Link } from 'react-router-dom'
+
+// Pirate looks up the pirate using the number parsed from the URL's pathname. If no pirate is found with the given number, then a "pirate not found" message is displayed.
+const Pirate = (props) => {
+  console.log(props.match.params.number)
+  const pirate = PiratesAPI.get(
+    parseInt(props.match.params.number, 10)
+  )
+    if (!pirate) {
+    return <div>Sorry, but the pirate was not found</div>
+  }
+  
+  return (
+    <div>
+      <h1>{pirate.name} (#{pirate.number})</h1>
+      <h2>Weapon: {pirate.weapon}</h2>
+      <Link to='/pirates'>Back</Link>
+    </div>
+  )
+}
+
+export default Pirate
+```
+
+We used path params to capture a variable. Examine a single Pirate component and find the `match.params.number` property. Note that the variable is stored as a string. We convert it to a number using `parseInt` base 10 and use it to fire the `get` function in our API. We also add a provision for a priate of that number not being found.
 
 ## Notes
