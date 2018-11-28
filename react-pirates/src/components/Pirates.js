@@ -1,9 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Pirates = (props) => (
   <div>
-  <p>Pirates</p>
-    <p>{props.details.name}</p>
+    <p><Link to={`/test`}></Link>{props.details.name}</p>
   </div>
 )
 
