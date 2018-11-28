@@ -1,6 +1,8 @@
-import React from 'react'
-import Header from './Header'
+import React from 'react';
+
 import Main from './Main'
+import Header from './Header'
+
 
 const App = () => (
   <div>
@@ -9,4 +11,4 @@ const App = () => (
   </div>
 )
 
-export default App
+export default App;
