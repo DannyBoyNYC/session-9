@@ -170,7 +170,7 @@ app.get('/api/pirates/:id', function(req, res){
 })
 ```
 
-We no longer need our React Load Sample Pirates. Delete:
+We no longer need our React Load Sample Pirates. Delete - `App.js`:
 
 ```js
 // import piratesFile from './data/sample-pirates-object';
@@ -249,6 +249,8 @@ addPirate(pirate) {
   .then(this.setState({ pirates: pirates }))
 }
 ```
+
+<!-- .then(response => this.setState({ pirates: response.data })) -->
 
 ## Routing
 
