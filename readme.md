@@ -17,7 +17,7 @@ Of course, if you wish you can do something entirely original. Just propose it. 
 CD into `express-pirates` `npm i` and `code .`
 CD into `react-pirates` `npm i` and `code .`
 
-Fire up the express app. Fire up the react app.
+`npm i` and fire up the express app. `npm i` and fire up the react app.
 
 ## Loading Review
 
@@ -141,6 +141,8 @@ import axios from 'axios';
   }
 ```
 
+Axios returns a JavaScript promise but you don’t have to resolve the promise two times, because axios already returns a JSON response for you. When using axios all errors are caught in the `catch()` block. 
+
 ## Removing Pirates
 
 Currently our `removePirate` function removes pirates from state but has no effect on the database.
@@ -260,9 +262,9 @@ Create a new project in today's directory.
 
 `npx create-react-app simple-router`
 
-`cd` into it and `npm start` it.
+Move the `components` folder from the `other` directory into the `src` folder. 
 
-Move the components folder from the `other` directory into the `src` folder. 
+`cd` into it, `code .` and `npm start` it.
 
 Clean up the default distro by deleting unnecessary files.
 
@@ -276,7 +278,7 @@ Since we are in a browser we'll install `react-router-dom`.
 
 Next we need to decide between [hash routing](https://reacttraining.com/react-router/web/api/HashRouter) and [browser routing](https://reacttraining.com/react-router/web/api/BrowserRouter). The hash router is appropriate for static websites so we will use the `BrowserRouter`.
 
-The brwoser router only works with a single child so let's nest our `App` component within it.
+The browser router only works with a single child so let's nest our `App` component within it.
 
 `index.js`:
 
@@ -295,7 +297,7 @@ ReactDOM.render((
 
 Examine the `Router` component using the React browser add in and note the history props. The most important property of a history object is `location`. The location object reflects where your application currently is. Under the hood, React router is using the html5 [history API](https://css-tricks.com/using-the-html5-history-api/). Prior to this, SPA developers commonly used [url hashes](https://coderexample.com/single-page-apps-jquery-routing/) (which do not cause a page refresh) to load and off load DOM elements.
 
-Let's implement a small bit of routing in App.
+Let's implement some top level routing in `App`.
 
 First, render the imported components.
 
@@ -346,15 +348,13 @@ Since `/` is part of `/pirates` and `/gallery` it matches both of them. We need 
 
 You can manually change the path in the browser's location field (e.g. `http://localhost:3001/pirates`) to see the effects.
 
-We will create links in the Header component.
+We will create links in the `Header` component.
 
 Edit `Header`:
 
 ```js
 import React from 'react'
 import { Link } from 'react-router-dom'
-
-// The Header creates links that can be used to navigate between routes.
 
 const Header = () => (
   <header>
@@ -370,6 +370,8 @@ const Header = () => (
 
 export default Header
 ```
+
+`Header` creates links that can be used to navigate between routes that are declared in `Main`. 
 
 Instead of `<a href="/">` we use `<Link to="/">`. `<Link>`s use the `to` prop to describe the location that they should navigate to. Wherever you render a `<Link>`, an anchor (`<a>`) will be rendered in your application’s HTML. `<Link>`s do not cause a page refresh.
 
@@ -432,8 +434,6 @@ import { Switch, Route } from 'react-router-dom'
 import AllPirates from './AllPirates'
 import Pirate from './Pirate'
 
-// The Pirates component matches one of two different routes depending on the full pathname
-
 const Pirates = () => (
   <Switch>
     <Route exact path='/pirates' component={AllPirates}/>
@@ -443,6 +443,8 @@ const Pirates = () => (
 
 export default Pirates
 ```
+
+The Pirates component matches one of two different routes depending on the full pathname.
 
 Note the use of params here. `:number` will be captured and stored in props as `match.params.number` in a `pirate` detail component.
 
@@ -552,7 +554,7 @@ import PiratesAPI from '../api'
 import { Link } from 'react-router-dom'
 
 const AllPirates = () => (
-  <div>
+  <React.Fragment>
   <ul>
     {
       PiratesAPI.all().map(p => (
@@ -562,17 +564,21 @@ const AllPirates = () => (
       ))
     }
   </ul>
-</div>
+  </React.Fragment>
 )
 
 export default AllPirates
 ```
 
-Note the use of `key` and the unique pirate number being used to create the link. Try removing the `key` to see the warning message.
+Note the use of `key` and the unique pirate number being used to create the link. Try removing the `key` to see the warning message. 
 
-Our route `<Route path='/pirates/:number' component={Pirate}/>` is working but requies additional information to be useful.
+`<React.Fragment>` is simply a way of creating a nested call to React.createComponent() - not really necessary here but useful when you don't want to use a `div`.
 
-Import the api and `Link` from the router. Also, use a function with a return value::
+Our route `<Route path='/pirates/:number' component={Pirate}/>` is working but should display additional information to the user.
+
+Import the api and `Link` from the router. Also, use a function with a return value.
+
+`Pirate.js`:
 
 ```js
 import React from 'react';
