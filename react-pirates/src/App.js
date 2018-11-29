@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Pirate from './components/Pirate'
+import Pirates from './components/Pirates';
+import PirateDetail from './components/PirateDetail';
 import Header from './components/Header'
 import PirateForm from './components/PirateForm'
-// import piratesFile from './data/sample-pirates-object';
+import { Switch, Route } from 'react-router-dom'
 
 class App extends Component {
 
@@ -46,26 +47,21 @@ class App extends Component {
     return (
       <div className="App">
         <Header headline="Pirates!" />
-        
-          {
-            Object.keys(this.state.pirates)
-            .map(key =>
-              <Pirate key={key}
-                index={key}
-                details={this.state.pirates[key]}
-                removePirate={this.removePirate} />)
-          }
-
+    
+        <Switch>
+          <Route exact path='/' render={(props) => (
+          <Pirates {...props} details={this.state.pirates}  />
+          )} />
+    
+          <Route path='/pirates/:number' render={(props) => (
+            <PirateDetail {...props} details={this.state.pirates} />
+          )} />
+        </Switch>
+    
         <PirateForm addPirate={this.addPirate} />
       </div>
     );
   }
-
-  // loadSamples() {
-  //   this.setState({
-  //     pirates: piratesFile
-  //   })
-  // }
 
   removePirate(key){
     const pirates = {...this.state.pirates}
@@ -84,17 +80,6 @@ class App extends Component {
     .then ( pirates[pirate] = pirate )
     .then(this.setState({ pirates: pirates }))
   }
-
-  // addPirate(pirate) {
-  //   //take a copy of the current state and put it into pirates var
-  //   const pirates = {...this.state.pirates}
-  //   //create a unique id
-  //   const timestamp = Date.now()
-  //   //add new pirate using accessor and id - objectName["propertyName"] and assignment
-  //   pirates[`pirate-${timestamp}`] = pirate
-  //   //set state pirates with var pirates
-  //   this.setState({ pirates: pirates })
-  // }
 
 }
 

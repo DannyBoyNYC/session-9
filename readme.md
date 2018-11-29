@@ -700,7 +700,7 @@ We will attempt to add routing to our current project. The goal is to create a m
 
 Install
 
-`npm i -S react-router-dom`
+`npm install --save react-router-dom`
 
 `Index.js`:
 
@@ -714,51 +714,192 @@ ReactDOM.render((
 ), document.getElementById('root'))
 ```
 
-`Pirate.js`:
+Looking at the structure of components, it appears that we will have to use `App` as a branching point for our route.
+
+`App.js`:
+
+```js
+import { Switch, Route } from 'react-router-dom';
+import Pirates from './components/Pirates';
+import PirateDetail from './components/PirateDetail';
+...
+    return (
+      <div className="App">
+        <Header headline="Pirates!" />
+    
+        <Switch>
+          <Route exact path='/' component={Pirates} />
+    
+          <Route path='/pirates/:number' component={PirateDetail} />
+        </Switch>
+    
+        <PirateForm addPirate={this.addPirate} />
+      </div>
+    );
+  }
+```
+
+We need to create a `PirateDetail` and a `Pirates` component. We will no longer be using the `Pirate` component.
+
+`PirateDetail`:
 
 ```js
 import React from 'react';
-import '../assets/css/Pirate.css';
-import Pirates from './Pirates';
-import PirateDetail from './PirateDetail';
 
-import { Switch, Route } from 'react-router-dom'
+const PirateDetail = () => (
+  <p>PirateDetail</p>
+)
 
-class Pirate extends React.Component {
-  render() {
-    const { details } = this.props;
-    return (
-      <Switch>
-      <Route exact path='/' render={(props) => (
-        <Pirates {...props} details={details}  />
-        )} />
-        <Route path='/pirates/:number' component={PirateDetail} />
-        </Switch> 
-        )
-      }
-    }
-    
-    export default Pirate;
+export default PirateDetail;
 ```
 
-Requires `PirateDetail.js`:
+`Pirates.js`:
+
+```js
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import '../assets/css/Pirate.css';
+
+class Pirate extends Component {
+  render(){
+    return (
+      <div className='pirate'>
+      <ul>
+        <li><Link to={`pirates/10`}>Pirate</Link></li>
+        </ul>
+      </div>
+      )
+    }
+  }
+  export default Pirate;
+```
+
+Edit `PirateDetail` to include a Link back to home.
+
+`PirateDetail.js`:
 
 ```js
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const PirateDetail = (props) => (
   <div className='pirate'>
   <ul>
-    <li>{props.name}</li>
-    <li>{props.weapon}</li>
-    <li>{props.vessel}</li>
-    {/* <li><button onClick={() => this.props.removePirate(this.props.index)}>✖︎</button></li> */}
+    <li>Pirate Detail</li>
   </ul>
+  <Link to='/'>Back</Link>
   </div>
 )
 
 export default PirateDetail
 ```
 
-## Notes
-https://stackoverflow.com/questions/39871662/passing-props-to-component-in-react-router-4
+For this example we are going to use a different [method for rendering the component](https://reacttraining.com/react-router/web/api/Route). In the previous exercise we used the `<Route component>` method: `<Route exact path='/pirates' component={AllPirates}/>` Here we will use the `<Route render>` method. This will allow us to pass in additional props on top of the Route props (match, location, history).
+
+We will use the `render` route to pass state to Pirates:
+
+```js
+return (
+  <div className="App">
+    <Header headline="Pirates!" />
+
+    <Switch>
+      <Route exact path='/' render={(props) => (
+      <Pirates {...props} details={this.state.pirates}  />
+      )} />
+
+      <Route path='/pirates/:number' component={PirateDetail} />
+    </Switch>
+
+    <PirateForm addPirate={this.addPirate} />
+  </div>
+);
+```
+
+Use the React inspector to examine the Pirate component. Note that it has access to a details prop in addition to the routing props.
+
+Now we will use the details props to render our pirates list.
+
+Edit `Pirates.js`:
+
+```js
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import '../assets/css/Pirate.css';
+
+class Pirate extends Component {
+  
+  render(){
+    const { details } = this.props.details;
+    return (
+      <div className='pirate'>
+      <ul>
+
+        {
+          this.props.details.map( p => (
+            <li key={p._id}>
+              <Link to={`pirates/${p._id}`}>{p.name}</Link>
+            </li>
+          ))
+        }
+        </ul>
+      </div>
+      )
+    }
+  }
+  export default Pirate;
+```
+
+NB: `Pirate.css`:
+
+```css
+.pirate ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+```
+
+Let's try fleshing out the detail view.
+
+Edit `PirateDetail`:
+
+```js
+import React from 'react';
+import { Link } from 'react-router-dom'
+
+const PirateDetail = (props) => {
+
+const pirate = props.details.filter(
+  p => p._id === props.match.params.number
+  // p => p.name === 'Gary Glitter'
+  )
+  
+  console.log(pirate)
+  
+  return (
+    <div className='pirate'>
+    <ul>
+    <li>{pirate[0].name}</li>
+    </ul>
+    <Link to='/'>Back</Link>
+    </div>
+    )
+  }
+  
+  export default PirateDetail
+```
+
+We will need to pass state to this component as well:
+
+```js
+<Switch>
+  <Route exact path='/' render={(props) => (
+  <Pirates {...props} details={this.state.pirates}  />
+  )} />
+
+  <Route path='/pirates/:number' render={(props) => (
+    <PirateDetail {...props} details={this.state.pirates} />
+  )} />
+</Switch>
+```

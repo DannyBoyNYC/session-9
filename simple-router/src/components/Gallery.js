@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Gallery = () => (
-  <p>Gallery</p>
+const PirateDetail = () => (
+  <p>PirateDetail</p>
 )
 
-export default Gallery;
+export default PirateDetail;
