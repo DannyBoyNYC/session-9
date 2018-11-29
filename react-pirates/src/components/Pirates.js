@@ -1,11 +1,40 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
+import '../assets/css/Pirate.css';
 
-const Pirates = (props) => (
-  <div>
-    <p>Pirates</p>
-    <p><Link to={`/pirates/${props.details._id}`}>{props.details.name}</Link></p>
-  </div>
-)
+import { Link } from 'react-router-dom'
 
-export default Pirates;
+class Pirate extends Component {
+  
+  render(){
+    const { details } = this.props.details;
+    return (
+      <div className='pirate'>
+      <ul>
+
+        {
+          this.props.details.map( p => (
+            <li key={p._id}>
+              <Link to={`pirates/${p._id}`}>{p.name}</Link>
+            </li>
+          ))
+        }
+      {/* <li>{details.name}</li>
+      <li>{details.weapon}</li>
+      <li>{details.vessel}</li> */}
+      <li><button onClick={() => this.props.removePirate(this.props.index)}>✖︎</button></li>
+      {/* <li><button onClick={() => this.props.removePirate(this.props.key)}>✖︎</button></li> */}
+        </ul>
+      </div>
+      )
+    }
+  }
+  export default Pirate;
+
+  // {
+  //   Object.keys(this.state.pirates)
+  //   .map(key =>
+  //     <Pirate key={key}
+  //       index={key}
+  //       details={this.state.pirates[key]}
+  //       removePirate={this.removePirate} />)
+  // }

@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import Pirate from './components/Pirate'
+import Pirates from './components/Pirates'
 import Header from './components/Header'
 import axios from 'axios';
-import PirateForm from './components/PirateForm'
-import piratesFile from './data/sample-pirates-object';
+import PirateForm from './components/PirateForm';
+import PirateDetail from './components/PirateDetail';
+
+import { Switch, Route } from 'react-router-dom'
 
 class App extends Component {
 
   constructor() {
     super();
     this.addPirate = this.addPirate.bind(this);
-    this.loadSamples = this.loadSamples.bind(this);
     this.removePirate = this.removePirate.bind(this);
     this.state = {
       pirates: {},
@@ -46,25 +47,21 @@ class App extends Component {
     return (
       <div className="App">
         <Header headline="Pirates!" />
-        
-          {
-            Object.keys(this.state.pirates)
-            .map(key =>
-              <Pirate key={key}
-                index={key}
-                details={this.state.pirates[key]}
-                removePirate={this.removePirate} />)
-          }
+
+        <Switch>
+
+          <Route exact path='/' render={(props) => (
+          <Pirates {...props} details={this.state.pirates}  />
+          )} />
+
+        <Route path='/pirates/:number' render={ (props) => (
+          <PirateDetail {...props} details={this.state.pirates}  />
+        )} />
+        </Switch>
 
         <PirateForm loadSamples={this.loadSamples} addPirate={this.addPirate} />
       </div>
     );
-  }
-
-  loadSamples() {
-    this.setState({
-      pirates: piratesFile
-    })
   }
 
   removePirate(key){
