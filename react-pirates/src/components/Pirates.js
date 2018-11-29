@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 const Pirates = (props) => (
   <div>
-    <p><Link to={`/pirates/${props.details._id}`}></Link>{props.details.name}</p>
+    <p>Pirates</p>
+    <p><Link to={`/pirates/${props.details._id}`}>{props.details.name}</Link></p>
   </div>
 )
 

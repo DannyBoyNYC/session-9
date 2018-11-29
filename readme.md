@@ -41,7 +41,7 @@ componentDidMount(){
   .then(pirates => this.setState({pirates, isLoading: false}))
 }
 ```
-
+ 
 In your render() method you can use React’s conditional rendering to display either a loading indicator or the resolved data.
 
 ```js
@@ -643,6 +643,21 @@ const PirateDetail = (props) => (
 )
 
 export default PirateDetail
+```
+
+And `Pirates.js`:
+
+```js
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Pirates = (props) => (
+  <div>
+    <p><Link to={`/test`}></Link>{props.details.name}</p>
+  </div>
+)
+
+export default Pirates;
 ```
 
 ## Notes
