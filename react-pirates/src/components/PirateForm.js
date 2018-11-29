@@ -4,10 +4,10 @@ import AddPirateForm from './AddPirateForm';
 class PirateForm extends Component {
   render(){
     return (
-      <div>
+      <React.Fragment>
       <h3>Pirate Form Component</h3>
         <AddPirateForm addPirate={this.props.addPirate} />
-      </div>
+      </React.Fragment>
       )
   }
   

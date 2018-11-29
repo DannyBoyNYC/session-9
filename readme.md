@@ -903,3 +903,8 @@ We will need to pass state to this component as well:
   )} />
 </Switch>
 ```
+
+## Notes
+
+`<React.Fragment>`
+

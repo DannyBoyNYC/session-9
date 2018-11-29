@@ -2,16 +2,31 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Pirates from './components/Pirates';
 import PirateDetail from './components/PirateDetail';
-import Header from './components/Header'
-import PirateForm from './components/PirateForm'
-import { Switch, Route } from 'react-router-dom'
+import Header from './components/Header';
+import PirateForm from './components/PirateForm';
+import { Switch, Route } from 'react-router-dom';
+
+// import MyProvider from './MyProvider';
+const MyContext = React.createContext();
+
+class MyProvider extends Component {
+  state = {
+    headline: 'Pirates!'
+  }
+  render() {
+    return (
+      <MyContext.Provider value='valuer'>
+        {this.props.children}
+      </MyContext.Provider>
+    )
+  }
+}
 
 class App extends Component {
 
   constructor() {
     super();
     this.addPirate = this.addPirate.bind(this);
-    // this.loadSamples = this.loadSamples.bind(this);
     this.removePirate = this.removePirate.bind(this);
     this.state = {
       pirates: {},
@@ -45,8 +60,9 @@ class App extends Component {
     }
     
     return (
+      <MyProvider>
       <div className="App">
-        <Header headline="Pirates!" />
+        <Header headline='Pirates!' />
     
         <Switch>
           <Route exact path='/' render={(props) => (
@@ -59,7 +75,8 @@ class App extends Component {
         </Switch>
     
         <PirateForm addPirate={this.addPirate} />
-      </div>
+        </div>
+        </MyProvider>
     );
   }
 
