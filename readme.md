@@ -1,8 +1,8 @@
-# IX - React
+# IX - React, React Router
 
 ## Homework
 
-Review the Routing notes and add a nested route to the pirates display page that links to a pirate detail screen.
+Review the Routing notes and complete a nested route to the pirates display page that links to a pirate detail screen.
 
 <!-- For your final project you will create a version of the recipes list and details pages in React.
 
@@ -41,7 +41,7 @@ componentDidMount(){
   .then(pirates => this.setState({pirates, isLoading: false}))
 }
 ```
- 
+
 In your render() method you can use React’s conditional rendering to display either a loading indicator or the resolved data.
 
 ```js
@@ -645,139 +645,5 @@ const PirateDetail = (props) => (
 export default PirateDetail
 ```
 
-And `Pirates.js`:
-
-```js
-import React from 'react';
-import { Link } from 'react-router-dom';
-
-const Pirates = (props) => (
-  <div>
-    <p><Link to={`/test`}></Link>{props.details.name}</p>
-  </div>
-)
-
-export default Pirates;
-```
-
 ## Notes
 https://stackoverflow.com/questions/39871662/passing-props-to-component-in-react-router-4
-
-App.js
-
-```js
-return (
-      <div className="App">
-        <Header headline="Pirates!" />
-
-        <Switch>
-          <Route exact path='/' render={(props) => (
-          <Pirates {...props} details={this.state.pirates}  />
-          )} />
-
-          <Route path='/pirates/:number' component={PirateDetail} />
-        </Switch>
-
-        <PirateForm loadSamples={this.loadSamples} addPirate={this.addPirate} />
-      </div>
-    );
-```
-
-Pirates.js
-
-```js
-import React, { Component } from 'react';
-import '../assets/css/Pirate.css';
-
-import { Link } from 'react-router-dom'
-
-class Pirate extends Component {
-  render(){
-    return (
-      <div className='pirate'>
-      <ul>
-        <li><Link to={`pirates/10`}>Pirate</Link></li>
-        </ul>
-      </div>
-      )
-    }
-  }
-  export default Pirate;
-```
-
-PirateDetail.js
-
-```js
-import React from 'react'
-import { Link } from 'react-router-dom'
-
-const PirateDetail = (props) => (
-  <div className='pirate'>
-  <ul>
-    <li>Pirate Detail</li>
-  </ul>
-  <Link to='/'>Back</Link>
-  </div>
-)
-
-export default PirateDetail
-```
-
-Edit Pirates.js:
-
-```js
-import React, { Component } from 'react';
-import '../assets/css/Pirate.css';
-
-import { Link } from 'react-router-dom'
-
-class Pirate extends Component {
-  
-  render(){
-    const { details } = this.props.details;
-    return (
-      <div className='pirate'>
-      <ul>
-
-        {
-          this.props.details.map( p => (
-            <li key={p._id}>
-              <Link to={`pirates/${p._id}`}>{p.name}</Link>
-            </li>
-          ))
-        }
-        </ul>
-      </div>
-      )
-    }
-  }
-  export default Pirate;
-```
-
-Edit PirateDetail:
-
-```js
-import React from 'react';
-import { Link } from 'react-router-dom'
-
-const PirateDetail = (props) => {
-
-const pirate = props.details.filter(
-  p => p._id === props.match.params.number
-  // p => p.name === 'Gary Glitter'
-  )
-  
-  console.log(pirate)
-  
-  return (
-    <div className='pirate'>
-    <ul>
-    <li>{pirate[0].name}</li>
-    </ul>
-    <Link to='/'>Back</Link>
-    </div>
-    )
-  }
-  
-  export default PirateDetail
-```
