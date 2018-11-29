@@ -262,17 +262,21 @@ Create a new project in today's directory.
 
 `cd` into it and `npm start` it.
 
-Clean up the default config and move the components folder from the other directory into src.
+Move the components folder from the `other` directory into the `src` folder. 
 
-Review [static routing](https://reacttraining.com/react-router/core/guides/philosophy) in ExpressJS. Compare this to React's dynamic routing.
+Clean up the default distro by deleting unnecessary files.
 
-Since we are in a browser we'll use `react-router-dom`.
+Review [static routing](https://reacttraining.com/react-router/core/guides/philosophy) in ExpressJS. Compare this to React's [dynamic routing](https://reacttraining.com/react-router/core/guides/philosophy/dynamic-routing).
 
-`npm install --save react-router-dom`
+React Router offers environment specific packages for web browsers or [native web apps](https://facebook.github.io/react-native/)) versions.
 
-Next we need to decide between hash routing and browser routing. The hash router is appropriate for static websites so we will use the `BrowserRouter`.
+Since we are in a browser we'll install `react-router-dom`.
 
-The router only works with a single child so let's nest our `App` component within it.
+`npm i -S react-router-dom`
+
+Next we need to decide between [hash routing](https://reacttraining.com/react-router/web/api/HashRouter) and [browser routing](https://reacttraining.com/react-router/web/api/BrowserRouter). The hash router is appropriate for static websites so we will use the `BrowserRouter`.
+
+The brwoser router only works with a single child so let's nest our `App` component within it.
 
 `index.js`:
 
@@ -289,9 +293,11 @@ ReactDOM.render((
 ), document.getElementById('root'))
 ```
 
-Examine the `App` component using the React browser add in. Note the history props. The most important property of a history object is the location. The location object reflects where your application currently is. Under the hood, React router is using the html5 [history API](https://css-tricks.com/using-the-html5-history-api/). Prior to this, SPA developers commonly used [url hashes](https://coderexample.com/single-page-apps-jquery-routing/) (which do not cause a page refresh) to load and off load DOM elements.
+Examine the `Router` component using the React browser add in and note the history props. The most important property of a history object is `location`. The location object reflects where your application currently is. Under the hood, React router is using the html5 [history API](https://css-tricks.com/using-the-html5-history-api/). Prior to this, SPA developers commonly used [url hashes](https://coderexample.com/single-page-apps-jquery-routing/) (which do not cause a page refresh) to load and off load DOM elements.
 
 Let's implement a small bit of routing in App.
+
+First, render the imported components.
 
 `App`:
 
@@ -309,6 +315,8 @@ const App = () => (
 
 export default App
 ```
+
+We will implement routes in Main.
 
 Edit `Main`:
 
@@ -332,11 +340,15 @@ const Main = () => (
 export default Main
 ```
 
-The `<Route>` component is the main building block of React Router. Anywhere that you want to only render content based on the location’s pathname, you should use a `<Route>` element. A `<Route>` expects a `path `prop, which is a string that describes the pathname that the route matches . 
+The `<Route>` component is the main building block of React Router. Anywhere that you want to only render content based on the location’s pathname, you should use a `<Route>` element. A `<Route>` expects a `path `prop - is a string that describes the pathname that the route matches . 
 
 Since `/` is part of `/pirates` and `/gallery` it matches both of them. We need to use `exact` on this route.
 
-Edit Header:
+You can manually change the path in the browser's location field (e.g. `http://localhost:3001/pirates`) to see the effects.
+
+We will create links in the Header component.
+
+Edit `Header`:
 
 ```js
 import React from 'react'
@@ -359,9 +371,11 @@ const Header = () => (
 export default Header
 ```
 
-Note: Instead of `<a href="/">` we use `<Link to="/">`. `<Link>`s use the `to` prop to describe the location that they should navigate to. Wherever you render a `<Link>`, an anchor (`<a>`) will be rendered in your application’s HTML. `<Link>`s do not cause a page refresh.
+Instead of `<a href="/">` we use `<Link to="/">`. `<Link>`s use the `to` prop to describe the location that they should navigate to. Wherever you render a `<Link>`, an anchor (`<a>`) will be rendered in your application’s HTML. `<Link>`s do not cause a page refresh.
 
 Another type of link is provided called [NavLink](https://reacttraining.com/react-router/web/api/NavLink). It  applies a class of active when the path is matched.
+
+Edit `Header`:
 
 ```js
 import React from 'react'
@@ -382,9 +396,7 @@ const Header = () => (
 export default Header
 ```
 
-`index.js`:
-
-`import './Pirate.css'`
+Create `Pirate.css` in `src`:
 
 ```css
 nav ul {
@@ -402,9 +414,13 @@ nav ul a {
 }
 ```
 
+And in `index.js`:
+
+`import './Pirate.css'`
+
 ### Nested Routes
 
-The pirate detail route is not included in the primary `<Switch>`. It will be rendered by the Pirates component which is rendered whenever the path begins with `pirates`.
+The pirate detail route is not included in Main's primary `<Switch>`. It will be rendered by the Pirates component which is rendered whenever the path begins with `/pirates`.
 
 Edit `Pirates.js` to include nested routes.
 
@@ -456,10 +472,13 @@ const Pirate = () => (
 export default Pirate;
 ```
 
-We will need a list of pirates. Create `api.js` inside `src`:
+### Displaying a list of pirates
+
+We will need something to clock on at the `/pirates` route. We'll use a list of pirates. 
+
+Create `api.js` - a simple data API that will be used to get the data for our components - inside `src`:
 
 ```js
-// A simple data API that will be used to get the data for our components. 
 const PiratesAPI = {
   pirates: [{
     "number": 1,
@@ -511,7 +530,9 @@ const PiratesAPI = {
     "weapon": "Sword",
     "vessel": "Bounty"
   }],
-  all: function() { return this.pirates},
+  all: function() { 
+    return this.pirates
+  },
   get: function(id) {
     const isPirate = p => p.number === id
     return this.pirates.find(isPirate)
@@ -521,7 +542,7 @@ const PiratesAPI = {
 export default PiratesAPI
 ```
 
-Note the two functions: `all` and `get` included here.
+Note the two functions: `all` and `get` included in the api. We'll use them in AllPirates to iterate over all of the pirates and create a link to their details page.
 
 Edit `AllPirates`:
 
@@ -530,7 +551,6 @@ import React from 'react'
 import PiratesAPI from '../api'
 import { Link } from 'react-router-dom'
 
-// The AllPirates iterates over all of the pirates and creates a link to their details page.
 const AllPirates = () => (
   <div>
   <ul>
@@ -548,22 +568,113 @@ const AllPirates = () => (
 export default AllPirates
 ```
 
-Note the use of `key` and the unique pirate number being used to create the link.
+Note the use of `key` and the unique pirate number being used to create the link. Try removing the `key` to see the warning message.
 
 Our route `<Route path='/pirates/:number' component={Pirate}/>` is working but requies additional information to be useful.
+
+Import the api and `Link` from the router. Also, use a function with a return value::
+
+```js
+import React from 'react';
+import PiratesAPI from '../api'
+import { Link } from 'react-router-dom'
+
+const Pirate = () => {
+  return (
+    <p>Pirate</p>
+  )
+}
+
+export default Pirate;
+```
+
+Now we can use the router props to extract the param:
+
+```js
+import React from 'react';
+import PiratesAPI from '../api'
+import { Link } from 'react-router-dom'
+
+const Pirate = (props) => {
+  console.log(props.match.params.number)
+  return (
+    <p>Pirate</p>
+  )
+
+}
+
+export default Pirate;
+```
+
+Note that the param is a string:
+
+`console.log(typeof(props.match.params.number))`
+
+We'll use the `get` function in our api to find the pirate by its number:
+
+```js
+import React from 'react';
+import PiratesAPI from '../api'
+import { Link } from 'react-router-dom'
+
+const Pirate = (props) => {
+  
+  const pirate = PiratesAPI.get(
+    parseInt(props.match.params.number, 10)
+  )
+
+  console.log(pirate)
+
+  return (
+    <p>Pirate</p>
+  )
+
+}
+
+export default Pirate;
+```
+
+Now we can populate the return with properties from the pirate object:
 
 ```js
 import React from 'react'
 import PiratesAPI from '../api'
 import { Link } from 'react-router-dom'
 
-// Pirate looks up the pirate using the number parsed from the URL's pathname. If no pirate is found with the given number, then a "pirate not found" message is displayed.
+const Pirate = (props) => {
+
+  const pirate = PiratesAPI.get(
+    parseInt(props.match.params.number, 10)
+  )
+  
+  return (
+    <div>
+      <h1>{pirate.name} (#{pirate.number})</h1>
+      <h2>Weapon: {pirate.weapon}</h2>
+      <Link to='/pirates'>Back</Link>
+    </div>
+  )
+}
+
+export default Pirate
+```
+
+The variable `Pirate` looks up the pirate using the number parsed from the URL's pathname. 
+
+If no pirate is found with the given number, then a message is displayed.
+
+```js
+import React from 'react'
+import PiratesAPI from '../api'
+import { Link } from 'react-router-dom'
+
 const Pirate = (props) => {
   console.log(props.match.params.number)
   const pirate = PiratesAPI.get(
     parseInt(props.match.params.number, 10)
   )
-    if (!pirate) {
+
+  if (!pirate) {
     return <div>Sorry, but the pirate was not found</div>
   }
   
@@ -579,15 +690,17 @@ const Pirate = (props) => {
 export default Pirate
 ```
 
-We used path params to capture a variable. Examine a single Pirate component and find the `match.params.number` property. Note that the variable is stored as a string. We convert it to a number using `parseInt` base 10 and use it to fire the `get` function in our API. We also add a provision for a priate of that number not being found.
+We used path params to capture a variable. Examine a single Pirate component and find the `match.params.number` property. (The variable is stored as a string.) We convert it to a number using `parseInt` base 10 and use it to fire the `get` function in our API. We also add a provision for a pirate of that number not being found.
 
-## Routing in the Main App
+Save and shut down the simple router.
+
+## Routing in react-pirates
 
 We will attempt to add routing to our current project. The goal is to create a master / detail view for our pirates.
 
 Install
 
-`npm install --save react-router-dom`
+`npm i -S react-router-dom`
 
 `Index.js`:
 
