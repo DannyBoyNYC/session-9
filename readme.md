@@ -2,7 +2,9 @@
 
 ## Homework
 
-Review the Routing notes and complete a nested route to the pirates display page that links to a pirate detail screen.
+Update state in react-pirates using returned data from the back end. Or, simply resolve the current state updates so there is no [Object][object].
+
+<!-- Review the Routing notes and complete a nested route to the pirates display page that links to a pirate detail screen. -->
 
 <!-- For your final project you will create a version of the recipes list and details pages in React.
 
